@@ -1,0 +1,200 @@
+flowchart TB
+    %% Frontend Layer - Top Level
+    subgraph Frontend["🖥️ FRONTEND APPLICATIONS LAYER"]
+        direction TB
+        subgraph ShellApps["Shell Applications"]
+            direction LR
+            SAU["Shell App User<br/>Ứng dụng Shell Người dùng"]
+            SAA["Shell App Admin<br/>Ứng dụng Shell Quản trị"]
+        end
+        
+        subgraph MicroFrontends["Micro-Frontend Modules"]
+            direction TB
+            subgraph UserModules["User Modules"]
+                direction LR
+                PUM["Product User Module<br/>Module Sản phẩm Người dùng"]
+                CUM["Cart User Module<br/>Module Giỏ hàng Người dùng"]
+                NUM["News User Module<br/>Module Tin tức Người dùng"]
+            end
+            subgraph AdminModules["Admin Modules"]
+                direction LR
+                PAM["Product Admin Module<br/>Module Sản phẩm Quản trị"]
+                NAM["News Admin Module<br/>Module Tin tức Quản trị"]
+            end
+        end
+    end
+    
+    %% BFF Layer - Middle Level
+    subgraph BFFLayer["🔗 BACKEND FOR FRONTEND (BFF) LAYER"]
+        direction LR
+        UBFF["User BFF<br/>Backend for Frontend Người dùng"]
+        ABFF["Admin BFF<br/>Backend for Frontend Quản trị"]
+    end
+    
+    %% Backend Services Layer - Lower Level
+    subgraph BackendLayer["⚡ BACKEND MICROSERVICES LAYER"]
+        direction TB
+        subgraph ConfigServices["Configuration Services"]
+            direction LR
+            SCS["Shell Config Service<br/>Dịch vụ Cấu hình Shell"]
+        end
+        
+        subgraph CoreServices["Core Services"]
+            direction LR
+            AS["Admin Service<br/>Dịch vụ Quản trị Tổng hợp"]
+            APS["Agent Policy Service<br/>Dịch vụ Chính sách Đại lý"]
+            AMS["Agent Management Service<br/>Dịch vụ Quản lý Đại lý"]
+        end
+        
+        subgraph BusinessServices["Business Services"]
+            direction LR
+            FS["Football Service<br/>Dịch vụ Bóng đá"]
+            US["User Service<br/>Dịch vụ Người dùng"]
+            PS["Payment Service<br/>Dịch vụ Thanh toán"]
+        end
+        
+        subgraph ExtendedServices["Extended Services"]
+            direction LR
+            CBS["Chatbot Service<br/>Dịch vụ Chatbot"]
+            DCS["Design Calculation Service<br/>Dịch vụ Tính toán Thiết kế"]
+            FAS["Football Analytics Service<br/>Dịch vụ Phân tích Bóng đá"]
+        end
+        
+        subgraph NewServices["New Services"]
+            direction LR
+            NS["News Service<br/>Dịch vụ Tin tức"]
+            CTS["Cart Service<br/>Dịch vụ Giỏ hàng"]
+            PRS["Product Service<br/>Dịch vụ Sản phẩm"]
+        end
+    end
+    
+    %% Infrastructure & Database Layer - Bottom Level
+    subgraph InfraLayer["🗄️ INFRASTRUCTURE & DATABASE LAYER"]
+        direction TB
+        subgraph Databases["Databases"]
+            direction TB
+            subgraph ConfigDB["Configuration Database"]
+                direction LR
+                SCDB[(Shell Config DB)]
+            end
+            subgraph DB1["Core Databases"]
+                direction LR
+                UDB[(User DB)]
+                ADB[(Admin DB)]
+                FDB[(Football DB)]
+                APDB[(Agent Policy DB)]
+            end
+            subgraph DB2["Service Databases"]
+                direction LR
+                PDB[(Payment DB)]
+                CBDB[(Chatbot DB)]
+                DCDB[(Design Calculation DB)]
+                FADB[(Football Analytics DB)]
+            end
+            subgraph DB3["New Service Databases"]
+                direction LR
+                AMDB[(Agent Management DB)]
+                PRDB[(Product DB)]
+                CTDB[(Cart DB)]
+                NDB[(News DB)]
+            end
+        end
+        
+        subgraph Infrastructure["Infrastructure Components"]
+            direction LR
+            MB[Message Broker]
+            CACHE[Cache]
+        end
+    end
+    
+    %% Vertical Layer Connections
+    Frontend --> BFFLayer
+    BFFLayer --> BackendLayer
+    BackendLayer --> InfraLayer
+    
+    %% Shell App to Micro-Frontend connections
+    SAU -.->|loads| PUM
+    SAU -.->|loads| CUM
+    SAU -.->|loads| NUM
+    SAA -.->|loads| PAM
+    SAA -.->|loads| NAM
+    
+    %% Shell Apps to BFF connections (ALL traffic goes through BFF)
+    SAU --> UBFF
+    SAA --> ABFF
+    
+    %% BFF to Shell Config Service connections (CORRECTED)
+    UBFF --> SCS
+    ABFF --> SCS
+    
+    %% User BFF to Backend Services connections
+    UBFF --> US
+    UBFF --> PRS
+    UBFF --> CTS
+    UBFF --> NS
+    UBFF --> CBS
+    UBFF --> PS
+    UBFF --> FS
+    UBFF --> DCS
+    UBFF --> FAS
+    
+    %% Admin BFF to Backend Services connections
+    ABFF --> AS
+    ABFF --> APS
+    ABFF --> AMS
+    ABFF --> PRS
+    ABFF --> NS
+    ABFF --> US
+    ABFF --> PS
+    ABFF --> FS
+    ABFF --> CBS
+    ABFF --> DCS
+    ABFF --> FAS
+    
+    %% Shell Config Service to Database
+    SCS --> SCDB
+    
+    %% Services to Database connections
+    US --> UDB
+    AS --> ADB
+    FS --> FDB
+    APS --> APDB
+    PS --> PDB
+    CBS --> CBDB
+    DCS --> DCDB
+    FAS --> FADB
+    AMS --> AMDB
+    PRS --> PRDB
+    CTS --> CTDB
+    NS --> NDB
+    
+    %% Infrastructure connections
+    AS --> MB
+    US --> MB
+    PS --> MB
+    SCS --> CACHE
+    AS --> CACHE
+    US --> CACHE
+    
+    %% Styling
+    classDef shellApp fill:#4a90e2,stroke:#2c5aa0,stroke-width:3px,color:#000000
+    classDef microFrontend fill:#7ed321,stroke:#5cb85c,stroke-width:2px,color:#000000
+    classDef shellConfig fill:#f5a623,stroke:#d68910,stroke-width:2px,color:#000000
+    classDef bff fill:#bd10e0,stroke:#9013fe,stroke-width:3px,color:#000000
+    classDef serviceGreen fill:#90ee90,stroke:#32cd32,stroke-width:2px,color:#000000
+    classDef servicePink fill:#ffb6c1,stroke:#ff69b4,stroke-width:2px,color:#000000
+    classDef database fill:#e6f3ff,stroke:#87ceeb,stroke-width:2px,color:#000000
+    classDef infrastructure fill:#ffe4e1,stroke:#ffa07a,stroke-width:2px,color:#000000
+    classDef layerStyle fill:#f9f9f9,stroke:#333,stroke-width:2px,stroke-dasharray: 5 5,color:#000000
+    
+    %% Apply classes
+    class SAU,SAA shellApp
+    class PUM,CUM,NUM,PAM,NAM microFrontend
+    class SCS shellConfig
+    class SCDB shellConfig
+    class UBFF,ABFF bff
+    class AS,APS,AMS,FS,US,PS,CBS,DCS,FAS serviceGreen
+    class NS,CTS,PRS servicePink
+    class UDB,ADB,FDB,APDB,PDB,CBDB,DCDB,FADB,AMDB,PRDB,CTDB,NDB,SCDB database
+    class MB,CACHE infrastructure
+    class Frontend,BFFLayer,BackendLayer,InfraLayer layerStyle

@@ -1,0 +1,29 @@
+{
+  "name": "duan12t9-microservice-architecture",
+  "version": "1.0.0",
+  "description": "Sơ đồ Kiến trúc Micro-Frontend & BFF - Dự án 12 tháng 9",
+  "main": "microservice-fixed.html",
+  "scripts": {
+    "generate-svg": "npx @mermaid-js/mermaid-cli -i microservice-football-analytics.mmd -o microservice-output.svg -p puppeteer-config.json",
+    "serve": "python -m http.server 8000"
+  },
+  "keywords": [
+    "microservice",
+    "micro-frontend",
+    "bff",
+    "architecture",
+    "mermaid",
+    "diagram",
+    "football"
+  ],
+  "author": "khpt1976-cloud",
+  "license": "MIT",
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.6.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/khpt1976-cloud/DuAn12T9.git"
+  },
+  "homepage": "https://github.com/khpt1976-cloud/DuAn12T9#readme"
+}
