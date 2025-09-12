@@ -18,7 +18,7 @@ Dự án này chứa các sơ đồ kiến trúc Micro-Frontend và Backend for 
 - **Configuration Services**: Shell Config Service
 - **Core Services**: Admin Service, Agent Policy Service, Agent Management Service
 - **Business Services**: Football Service ⚽, User Service, Payment Service
-- **Extended Services**: Chatbot Service, Design Calculation Service, Football Analytics Service ⚽
+- **Extended Services**: Chatbot Service, Design Calculation Service, Construction Log Service 📋
 - **New Services**: News Service, Cart Service, Product Service
 
 ### 🗄️ Database & Infrastructure
@@ -80,7 +80,7 @@ npx @mermaid-js/mermaid-cli -i microservice-football-analytics.mmd -o output.svg
 
 - **v1.0**: Sơ đồ cơ bản với subgraph phức tạp
 - **v2.0**: Thêm Football Service thay thế Contract Service
-- **v3.0**: Thêm Football Analytics Service thay thế Inventory Management
+- **v3.0**: Thêm Construction Log Service thay thế Inventory Management
 - **v4.0**: Sửa lỗi màu đen che phủ, tối ưu hiển thị
 
 ## 👨‍💻 Tác giả
@@ -94,4 +94,4 @@ Dự án này được phát hành dưới MIT License.
 
 ---
 
-⚽ **Đặc biệt**: Hệ thống tập trung vào các dịch vụ bóng đá với Football Service và Football Analytics Service!
+⚽ **Đặc biệt**: Hệ thống tập trung vào Football Service và Construction Log Service 📋 cho quản lý nhật ký thi công!
