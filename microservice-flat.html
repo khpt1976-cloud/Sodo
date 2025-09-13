@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sơ đồ Kiến trúc Micro-Frontend & BFF - Layout phẳng</title>
+    <script src="https://cdn.jsdelivr.net/npm/mermaid@10.6.1/dist/mermaid.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .navbar {
+            background: linear-gradient(135deg, #1e2a3a 0%, #2c3e50 100%);
+            padding: 0 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .navbar::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(90deg, transparent 0%, rgba(0,188,212,0.1) 50%, transparent 100%);
+            pointer-events: none;
+        }
+        
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex: 1;
+        }
+        
+        .nav-brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-right: 30px;
+        }
+        
+        .nav-logo {
+            width: 32px;
+            height: 32px;
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+            font-size: 14px;
+        }
+        
+        .nav-brand-text {
+            color: #00bcd4;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .nav-menu {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .nav-item {
+            margin: 0;
+        }
+        
+        .nav-link {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            white-space: nowrap;
+        }
+        
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0,188,212,0.2), rgba(0,151,167,0.2));
+            border-radius: 8px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .nav-link:hover {
+            color: white;
+            transform: translateY(-1px);
+        }
+        
+        .nav-link:hover::before {
+            opacity: 1;
+        }
+        
+        .nav-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #4a90e2 0%, #357abd 100%);
+            color: white;
+            padding: 6px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            margin: 0;
+            font-size: 0.5em;
+            font-weight: 300;
+            text-shadow: 0 0.4px 0.8px rgba(0,0,0,0.3);
+        }
+        
+        .header p {
+            margin: 2px 0 0 0;
+            font-size: 0.24em;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px;
+        }
+        
+        .diagram-container {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: auto;
+            height: 80vh;
+            max-height: 800px;
+            position: relative;
+            cursor: grab;
+        }
+        
+        .diagram-container:active {
+            cursor: grabbing;
+        }
+        
+        .mermaid {
+            text-align: center;
+            min-height: 100%;
+            width: 100%;
+        }
+        
+
+        
+        .btn {
+            border: none;
+            padding: 10px 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 4px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+            white-space: nowrap;
+        }
+        
+        .btn-secondary {
+            background: rgba(255,255,255,0.1);
+            color: rgba(255,255,255,0.9);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        
+        .btn-secondary:hover {
+            background: rgba(0,188,212,0.2);
+            color: white;
+            border-color: rgba(0,188,212,0.4);
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(0,188,212,0.2);
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #00bcd4, #0097a7);
+            color: white;
+            border: 1px solid #00bcd4;
+            font-weight: 600;
+            padding: 10px 24px;
+        }
+        
+        .btn-primary:hover {
+            background: linear-gradient(135deg, #0097a7, #00838f);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 20px rgba(0,188,212,0.4);
+        }
+        
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+        
+        .btn:hover::before {
+            left: 100%;
+        }
+        
+        .zoom-info {
+            margin-left: 15px;
+            font-weight: 500;
+            color: white;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1400px) {
+            .nav-menu {
+                gap: 10px;
+            }
+            .nav-link {
+                font-size: 14px;
+                padding: 6px 12px;
+            }
+            .btn {
+                font-size: 13px;
+                padding: 8px 14px;
+            }
+            .btn-primary {
+                padding: 8px 18px;
+            }
+        }
+        
+        @media (max-width: 1200px) {
+            .navbar {
+                padding: 0 20px;
+            }
+            .nav-brand-text {
+                font-size: 18px;
+            }
+            .nav-menu {
+                gap: 8px;
+            }
+            .nav-link {
+                font-size: 13px;
+                padding: 6px 10px;
+            }
+            .btn {
+                font-size: 12px;
+                padding: 8px 12px;
+                margin: 0 2px;
+            }
+            .btn-primary {
+                padding: 8px 16px;
+            }
+        }
+        
+        @media (max-width: 1000px) {
+            .nav-controls {
+                gap: 4px;
+            }
+            .zoom-info {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 900px) {
+            .nav-menu li:nth-child(n+4) {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar {
+                height: 60px;
+                padding: 0 15px;
+            }
+            .nav-brand {
+                margin-right: 15px;
+            }
+            .nav-logo {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+            .nav-brand-text {
+                font-size: 16px;
+            }
+            .nav-menu li:nth-child(n+3) {
+                display: none;
+            }
+            .btn {
+                font-size: 11px;
+                padding: 6px 10px;
+            }
+            .btn-primary {
+                padding: 6px 14px;
+            }
+        }
+        
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Navigation Bar -->
+        <nav class="navbar">
+            <div class="nav-left">
+                <div class="nav-brand">
+                    <div class="nav-logo">AI</div>
+                    <span class="nav-brand-text">HDT AI</span>
+                </div>
+                <ul class="nav-menu">
+                    <li class="nav-item"><a href="#" class="nav-link">Về chúng tôi</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Dịch vụ</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Giá</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Đại lý</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Liên hệ</a></li>
+                    <li class="nav-item"><a href="#" class="nav-link">Hướng dẫn</a></li>
+                </ul>
+            </div>
+            <div class="nav-controls">
+                <button class="btn btn-secondary" onclick="fitToScreen()">Vừa màn hình</button>
+                <button class="btn btn-secondary" onclick="zoomIn()">Phóng to</button>
+                <button class="btn btn-secondary" onclick="zoomOut()">Thu nhỏ</button>
+                <button class="btn btn-secondary" onclick="resetZoom()">Reset</button>
+                <button class="btn btn-secondary" onclick="downloadSVG()">Tải SVG</button>
+                <button class="btn btn-primary">Bắt đầu</button>
+                <span class="zoom-info">Zoom: <span id="zoomLevel">100%</span></span>
+            </div>
+        </nav>
+        
+        <div class="header">
+            <h1>🏗️ Sơ đồ Kiến trúc Micro-Frontend & BFF</h1>
+            <p>Phiên bản Tối ưu - Đã bổ sung đầy đủ Admin Service</p>
+        </div>
+        
+        <div class="content">
+            
+            <div class="diagram-container">
+                <div class="mermaid" id="diagram">
+graph TB
+    %% Top Spacer
+    SPACER1[" "]
+    
+    %% Shell Applications Layer
+    subgraph ShellLayer["🖥️ Shell Applications"]
+        direction LR
+        SAU["Shell App User<br/>Ứng dụng Shell Người dùng"]
+        SAA["Shell App Admin<br/>Ứng dụng Shell Quản trị"]
+    end
+    
+    %% Spacer between layers
+    SPACER2[" "]
+    
+    %% User Micro-Frontend Modules - Left Side
+    subgraph UserModules["🔵 User Micro-Frontend Modules"]
+        direction TB
+        subgraph UserRow1[" "]
+            direction LR
+            UPM["User Profile<br/>Module<br/>Hồ sơ Người dùng"]
+            FUM["Football User<br/>Module<br/>Bóng đá Người dùng"]
+            PUM["Product User<br/>Module<br/>Sản phẩm Người dùng"]
+        end
+        subgraph UserRow2[" "]
+            direction LR
+            CUM["Cart User<br/>Module<br/>Giỏ hàng Người dùng"]
+            PAM_USER["Payment User<br/>Module<br/>Thanh toán Người dùng"]
+            CBM["Chatbot User<br/>Module<br/>Chatbot Người dùng"]
+        end
+        subgraph UserRow3[" "]
+            direction LR
+            NUM["News User<br/>Module<br/>Tin tức Người dùng"]
+            CLUM["Construction Log<br/>User Module<br/>Nhật ký Thi công"]
+            DCUM["Design Calculation<br/>User Module<br/>Tính toán Thiết kế"]
+        end
+        subgraph UserRow4[" "]
+            direction LR
+            AUM["Agent User<br/>Module<br/>Đại lý Người dùng"]
+            APUM["Agent Policy<br/>User Module<br/>Chính sách Đại lý"]
+            USER_SPACER[" "]
+        end
+    end
+    
+    %% Admin Micro-Frontend Modules - Right Side
+    subgraph AdminModules["🔴 Admin Micro-Frontend Modules"]
+        direction TB
+        subgraph AdminRow1[" "]
+            direction LR
+            UAM["User Admin<br/>Module<br/>Quản trị Người dùng"]
+            FAM["Football Admin<br/>Module<br/>Quản trị Bóng đá"]
+            PAM["Product Admin<br/>Module<br/>Quản trị Sản phẩm"]
+        end
+        subgraph AdminRow2[" "]
+            direction LR
+            PAYAM["Payment Admin<br/>Module<br/>Quản trị Thanh toán"]
+            CBAM["Chatbot Admin<br/>Module<br/>Quản trị Chatbot"]
+            NAM["News Admin<br/>Module<br/>Quản trị Tin tức"]
+        end
+        subgraph AdminRow3[" "]
+            direction LR
+            CLAM["Construction Log<br/>Admin Module<br/>Quản trị Nhật ký"]
+            DCAM["Design Calculation<br/>Admin Module<br/>Quản trị Tính toán"]
+            SAM["System Admin<br/>Module<br/>Quản trị Hệ thống"]
+        end
+        subgraph AdminRow4[" "]
+            direction LR
+            AMAM["Agent Management<br/>Admin Module<br/>Quản trị Đại lý"]
+            APAM["Agent Policy<br/>Admin Module<br/>Quản trị Chính sách"]
+            ADMIN_SPACER[" "]
+        end
+    end
+    
+    %% Spacer between layers
+    SPACER3[" "]
+    
+    %% BFF Layer
+    subgraph BFFLayer["🔗 Backend For Frontend (BFF) Layer"]
+        direction LR
+        UBFF["User BFF<br/>Backend for Frontend<br/>Người dùng"]
+        ABFF["Admin BFF<br/>Backend for Frontend<br/>Quản trị"]
+    end
+    
+    %% Spacer between layers
+    SPACER4[" "]
+    
+    %% Backend Services Layer
+    subgraph BackendServices["⚡ Backend Microservices"]
+        direction LR
+        US["User<br/>Service<br/>Dịch vụ Người dùng"]
+        FS["Football<br/>Service<br/>Dịch vụ Bóng đá"]
+        PS["Payment<br/>Service<br/>Dịch vụ Thanh toán"]
+        CBS["Chatbot<br/>Service<br/>Dịch vụ Chatbot"]
+        NS["News<br/>Service<br/>Dịch vụ Tin tức"]
+        PRS["Product<br/>Service<br/>Dịch vụ Sản phẩm"]
+        CTS["Cart<br/>Service<br/>Dịch vụ Giỏ hàng"]
+        DCS["Design Calculation<br/>Service<br/>Dịch vụ Tính toán"]
+        FAS["Construction Log<br/>Service<br/>Dịch vụ Nhật ký"]
+        AMS["Agent Management<br/>Service<br/>Dịch vụ Quản lý Đại lý"]
+        APS["Agent Policy<br/>Service<br/>Dịch vụ Chính sách"]
+        SCS["Shell Config<br/>Service<br/>Dịch vụ Cấu hình"]
+    end
+    
+    %% Large Spacer before Infrastructure - equivalent to red rectangle height
+    SPACER5[" "]
+    SPACER5A[" "]
+    SPACER5B[" "]
+    SPACER5C[" "]
+    
+    %% Infrastructure Components Layer
+    subgraph InfrastructureLayer["🔧 Infrastructure Components"]
+        direction LR
+        MB["Message Broker<br/>Trung gian Tin nhắn<br/>(Redis/RabbitMQ)"]
+        CACHE["Cache<br/>Bộ nhớ đệm<br/>(Redis/Memcached)"]
+    end
+    
+    %% Spacer between layers
+    SPACER6[" "]
+    
+    %% Database Layer
+    subgraph DatabaseLayer["🗄️ Database Layer"]
+        direction LR
+        UDB[(User DB<br/>Cơ sở dữ liệu<br/>Người dùng)]
+        FDB[(Football DB<br/>Cơ sở dữ liệu<br/>Bóng đá)]
+        PDB[(Payment DB<br/>Cơ sở dữ liệu<br/>Thanh toán)]
+        CBDB[(Chatbot DB<br/>Cơ sở dữ liệu<br/>Chatbot)]
+        NDB[(News DB<br/>Cơ sở dữ liệu<br/>Tin tức)]
+        PRDB[(Product DB<br/>Cơ sở dữ liệu<br/>Sản phẩm)]
+        CTDB[(Cart DB<br/>Cơ sở dữ liệu<br/>Giỏ hàng)]
+        DCDB[(Design Calc DB<br/>Cơ sở dữ liệu<br/>Tính toán)]
+        FADB[(Construction DB<br/>Cơ sở dữ liệu<br/>Nhật ký)]
+        AMDB[(Agent Mgmt DB<br/>Cơ sở dữ liệu<br/>Quản lý Đại lý)]
+        APDB[(Agent Policy DB<br/>Cơ sở dữ liệu<br/>Chính sách)]
+        SCDB[(Shell Config DB<br/>Cơ sở dữ liệu<br/>Cấu hình)]
+    end
+    
+    %% Bottom Spacer
+    SPACER7[" "]
+    
+    %% Vertical flow connections for spacing
+    SPACER1 --> ShellLayer
+    ShellLayer --> SPACER2
+    SPACER2 --> UserModules
+    SPACER2 --> AdminModules
+    UserModules --> SPACER3
+    AdminModules --> SPACER3
+    SPACER3 --> BFFLayer
+    BFFLayer --> SPACER4
+    SPACER4 --> BackendServices
+    BackendServices --> SPACER5
+    SPACER5 --> SPACER5A
+    SPACER5A --> SPACER5B
+    SPACER5B --> SPACER5C
+    SPACER5C --> InfrastructureLayer
+    InfrastructureLayer --> SPACER6
+    SPACER6 --> DatabaseLayer
+    DatabaseLayer --> SPACER7
+    
+    %% Shell Apps to User Modules connections
+    SAU -.->|loads| UPM
+    SAU -.->|loads| FUM
+    SAU -.->|loads| PUM
+    SAU -.->|loads| CUM
+    SAU -.->|loads| PAM_USER
+    SAU -.->|loads| CBM
+    SAU -.->|loads| NUM
+    SAU -.->|loads| CLUM
+    SAU -.->|loads| DCUM
+    SAU -.->|loads| AUM
+    SAU -.->|loads| APUM
+    
+    %% Shell Apps to Admin Modules connections
+    SAA -.->|loads| UAM
+    SAA -.->|loads| FAM
+    SAA -.->|loads| PAM
+    SAA -.->|loads| PAYAM
+    SAA -.->|loads| CBAM
+    SAA -.->|loads| NAM
+    SAA -.->|loads| CLAM
+    SAA -.->|loads| DCAM
+    SAA -.->|loads| SAM
+    SAA -.->|loads| AMAM
+    SAA -.->|loads| APAM
+    
+    %% Shell Apps to BFF connections
+    SAU --> UBFF
+    SAA --> ABFF
+    
+    %% User BFF to Backend Services connections
+    UBFF --> US
+    UBFF --> FS
+    UBFF --> PS
+    UBFF --> CBS
+    UBFF --> NS
+    UBFF --> PRS
+    UBFF --> CTS
+    UBFF --> DCS
+    UBFF --> FAS
+    UBFF --> AMS
+    UBFF --> APS
+    UBFF --> SCS
+    
+    %% Admin BFF to Backend Services connections
+    ABFF --> US
+    ABFF --> FS
+    ABFF --> PS
+    ABFF --> CBS
+    ABFF --> NS
+    ABFF --> PRS
+    ABFF --> CTS
+    ABFF --> DCS
+    ABFF --> FAS
+    ABFF --> AMS
+    ABFF --> APS
+    ABFF --> SCS
+    
+    %% Backend Services to Infrastructure connections
+    US -.-> MB
+    FS -.-> MB
+    PS -.-> MB
+    CBS -.-> MB
+    NS -.-> MB
+    PRS -.-> MB
+    CTS -.-> MB
+    DCS -.-> MB
+    FAS -.-> MB
+    AMS -.-> MB
+    APS -.-> MB
+    SCS -.-> MB
+    
+    US -.-> CACHE
+    FS -.-> CACHE
+    PS -.-> CACHE
+    CBS -.-> CACHE
+    NS -.-> CACHE
+    PRS -.-> CACHE
+    CTS -.-> CACHE
+    DCS -.-> CACHE
+    FAS -.-> CACHE
+    AMS -.-> CACHE
+    APS -.-> CACHE
+    SCS -.-> CACHE
+    
+    %% Backend Services to Database connections
+    US --> UDB
+    FS --> FDB
+    PS --> PDB
+    CBS --> CBDB
+    NS --> NDB
+    PRS --> PRDB
+    CTS --> CTDB
+    DCS --> DCDB
+    FAS --> FADB
+    AMS --> AMDB
+    APS --> APDB
+    SCS --> SCDB
+    
+    %% Styling
+    classDef shellApp fill:#4a90e2,stroke:#2c5aa0,stroke-width:3px,color:#000000
+    classDef userModule fill:#7ed321,stroke:#5cb85c,stroke-width:2px,color:#000000
+    classDef adminModule fill:#7ed321,stroke:#5cb85c,stroke-width:2px,color:#000000
+    classDef bff fill:#bd10e0,stroke:#9013fe,stroke-width:3px,color:#000000
+    classDef service fill:#90ee90,stroke:#32cd32,stroke-width:2px,color:#000000
+    classDef infrastructure fill:#ff9500,stroke:#e68900,stroke-width:2px,color:#000000
+    classDef database fill:#e6f3ff,stroke:#87ceeb,stroke-width:2px,color:#000000
+    classDef spacer fill:transparent,stroke:transparent,color:transparent
+    
+    %% Apply classes
+    class SAU,SAA shellApp
+    class UPM,FUM,PUM,CUM,PAM_USER,CBM,NUM,CLUM,DCUM,AUM,APUM userModule
+    class UAM,FAM,PAM,PAYAM,CBAM,NAM,CLAM,DCAM,SAM,AMAM,APAM adminModule
+    class UBFF,ABFF bff
+    class US,FS,PS,CBS,NS,PRS,CTS,DCS,FAS,AMS,APS,SCS service
+    class MB,CACHE infrastructure
+    class UDB,FDB,PDB,CBDB,NDB,PRDB,CTDB,DCDB,FADB,AMDB,APDB,SCDB database
+    class SPACER1,SPACER2,SPACER3,SPACER4,SPACER5,SPACER5A,SPACER5B,SPACER5C,SPACER6,SPACER7,USER_SPACER,ADMIN_SPACER spacer
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Mermaid
+        mermaid.initialize({
+            startOnLoad: true,
+            theme: 'default',
+            flowchart: {
+                useMaxWidth: true,
+                htmlLabels: true,
+                curve: 'basis',
+                nodeSpacing: 50,
+                rankSpacing: 80,
+                padding: 20
+            },
+            themeVariables: {
+                fontSize: '12px'
+            }
+        });
+
+        let currentZoom = 1;
+        const zoomStep = 0.1;
+        const minZoom = 0.3;
+        const maxZoom = 2;
+
+        function zoomIn() {
+            if (currentZoom < maxZoom) {
+                currentZoom += zoomStep;
+                applyZoom();
+            }
+        }
+
+        function zoomOut() {
+            if (currentZoom > minZoom) {
+                currentZoom -= zoomStep;
+                applyZoom();
+            }
+        }
+
+        function resetZoom() {
+            currentZoom = 1;
+            applyZoom();
+        }
+        
+        function fitToScreen() {
+            currentZoom = 0.6;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const diagram = document.querySelector('.mermaid svg');
+            if (diagram) {
+                diagram.style.transform = `scale(${currentZoom})`;
+                diagram.style.transformOrigin = 'center top';
+            }
+            updateZoomDisplay();
+        }
+        
+        function updateZoomDisplay() {
+            const zoomLevel = document.getElementById('zoomLevel');
+            if (zoomLevel) {
+                zoomLevel.textContent = Math.round(currentZoom * 100) + '%';
+            }
+        }
+
+        function downloadSVG() {
+            const svg = document.querySelector('.mermaid svg');
+            if (svg) {
+                const svgData = new XMLSerializer().serializeToString(svg);
+                const svgBlob = new Blob([svgData], {type: 'image/svg+xml;charset=utf-8'});
+                const svgUrl = URL.createObjectURL(svgBlob);
+                const downloadLink = document.createElement('a');
+                downloadLink.href = svgUrl;
+                downloadLink.download = 'microservice-flat-architecture.svg';
+                document.body.appendChild(downloadLink);
+                downloadLink.click();
+                document.body.removeChild(downloadLink);
+                URL.revokeObjectURL(svgUrl);
+            }
+        }
+
+        // Auto-apply zoom after diagram loads
+        setTimeout(() => {
+            applyZoom();
+            initializeDragAndDrop();
+        }, 2000);
+        
+        // Initialize zoom display on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateZoomDisplay();
+        });
+
+        // Drag and drop functionality
+        function initializeDragAndDrop() {
+            const container = document.querySelector('.diagram-container');
+            let isDragging = false;
+            let startX, startY, scrollLeft, scrollTop;
+
+            container.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.pageX - container.offsetLeft;
+                startY = e.pageY - container.offsetTop;
+                scrollLeft = container.scrollLeft;
+                scrollTop = container.scrollTop;
+                container.style.cursor = 'grabbing';
+            });
+
+            container.addEventListener('mouseleave', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+
+            container.addEventListener('mouseup', () => {
+                isDragging = false;
+                container.style.cursor = 'grab';
+            });
+
+            container.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const x = e.pageX - container.offsetLeft;
+                const y = e.pageY - container.offsetTop;
+                const walkX = (x - startX) * 2;
+                const walkY = (y - startY) * 2;
+                container.scrollLeft = scrollLeft - walkX;
+                container.scrollTop = scrollTop - walkY;
+            });
+
+            // Touch support for mobile
+            container.addEventListener('touchstart', (e) => {
+                isDragging = true;
+                const touch = e.touches[0];
+                startX = touch.pageX - container.offsetLeft;
+                startY = touch.pageY - container.offsetTop;
+                scrollLeft = container.scrollLeft;
+                scrollTop = container.scrollTop;
+            });
+
+            container.addEventListener('touchend', () => {
+                isDragging = false;
+            });
+
+            container.addEventListener('touchmove', (e) => {
+                if (!isDragging) return;
+                e.preventDefault();
+                const touch = e.touches[0];
+                const x = touch.pageX - container.offsetLeft;
+                const y = touch.pageY - container.offsetTop;
+                const walkX = (x - startX) * 2;
+                const walkY = (y - startY) * 2;
+                container.scrollLeft = scrollLeft - walkX;
+                container.scrollTop = scrollTop - walkY;
+            });
+        }
+    </script>
+</body>
+</html>

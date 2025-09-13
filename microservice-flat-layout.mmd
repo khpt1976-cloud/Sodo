@@ -1,0 +1,166 @@
+graph TB
+    %% Shell Applications Layer
+    subgraph ShellLayer["Shell Applications"]
+        direction LR
+        SAU["Shell App User"]
+        SAA["Shell App Admin"]
+    end
+    
+    %% User Micro-Frontend Modules
+    subgraph UserModules["User Micro-Frontend Modules"]
+        direction LR
+        UPM["User Profile<br/>Module"]
+        FUM["Football User<br/>Module"]
+        PUM["Product User<br/>Module"]
+        CUM["Cart User<br/>Module"]
+        PAM_USER["Payment User<br/>Module"]
+        CBM["Chatbot User<br/>Module"]
+        NUM["News User<br/>Module"]
+        CLUM["Construction Log<br/>User Module"]
+        DCUM["Design Calculation<br/>User Module"]
+        AUM["Agent User<br/>Module"]
+        APUM["Agent Policy<br/>User Module"]
+    end
+    
+    %% Admin Micro-Frontend Modules
+    subgraph AdminModules["Admin Micro-Frontend Modules"]
+        direction LR
+        UAM["User Admin<br/>Module"]
+        FAM["Football Admin<br/>Module"]
+        PAM["Product Admin<br/>Module"]
+        PAYAM["Payment Admin<br/>Module"]
+        CBAM["Chatbot Admin<br/>Module"]
+        NAM["News Admin<br/>Module"]
+        CLAM["Construction Log<br/>Admin Module"]
+        DCAM["Design Calculation<br/>Admin Module"]
+        SAM["System Admin<br/>Module"]
+        AMAM["Agent Management<br/>Admin Module"]
+        APAM["Agent Policy<br/>Admin Module"]
+    end
+    
+    %% BFF Layer
+    subgraph BFFLayer["Backend For Frontend (BFF) Layer"]
+        direction LR
+        UBFF["User BFF"]
+        ABFF["Admin BFF"]
+    end
+    
+    %% Backend Services Layer
+    subgraph BackendServices["Backend Microservices"]
+        direction LR
+        US["User<br/>Service"]
+        FS["Football<br/>Service"]
+        PS["Payment<br/>Service"]
+        CBS["Chatbot<br/>Service"]
+        NS["News<br/>Service"]
+        PRS["Product<br/>Service"]
+        CTS["Cart<br/>Service"]
+        DCS["Design Calculation<br/>Service"]
+        FAS["Construction Log<br/>Service"]
+        AMS["Agent Management<br/>Service"]
+        APS["Agent Policy<br/>Service"]
+        SCS["Shell Config<br/>Service"]
+    end
+    
+    %% Database Layer
+    subgraph DatabaseLayer["Database Layer"]
+        direction LR
+        UDB[(User DB)]
+        FDB[(Football DB)]
+        PDB[(Payment DB)]
+        CBDB[(Chatbot DB)]
+        NDB[(News DB)]
+        PRDB[(Product DB)]
+        CTDB[(Cart DB)]
+        DCDB[(Design Calc DB)]
+        FADB[(Construction DB)]
+        AMDB[(Agent Mgmt DB)]
+        APDB[(Agent Policy DB)]
+        SCDB[(Shell Config DB)]
+    end
+    
+    %% Shell Apps to Modules connections
+    SAU -.->|loads| UPM
+    SAU -.->|loads| FUM
+    SAU -.->|loads| PUM
+    SAU -.->|loads| CUM
+    SAU -.->|loads| PAM_USER
+    SAU -.->|loads| CBM
+    SAU -.->|loads| NUM
+    SAU -.->|loads| CLUM
+    SAU -.->|loads| DCUM
+    SAU -.->|loads| AUM
+    SAU -.->|loads| APUM
+    
+    SAA -.->|loads| UAM
+    SAA -.->|loads| FAM
+    SAA -.->|loads| PAM
+    SAA -.->|loads| PAYAM
+    SAA -.->|loads| CBAM
+    SAA -.->|loads| NAM
+    SAA -.->|loads| CLAM
+    SAA -.->|loads| DCAM
+    SAA -.->|loads| SAM
+    SAA -.->|loads| AMAM
+    SAA -.->|loads| APAM
+    
+    %% Shell Apps to BFF connections
+    SAU --> UBFF
+    SAA --> ABFF
+    
+    %% BFF to Backend Services connections
+    UBFF --> US
+    UBFF --> FS
+    UBFF --> PS
+    UBFF --> CBS
+    UBFF --> NS
+    UBFF --> PRS
+    UBFF --> CTS
+    UBFF --> DCS
+    UBFF --> FAS
+    UBFF --> AMS
+    UBFF --> APS
+    UBFF --> SCS
+    
+    ABFF --> US
+    ABFF --> FS
+    ABFF --> PS
+    ABFF --> CBS
+    ABFF --> NS
+    ABFF --> PRS
+    ABFF --> CTS
+    ABFF --> DCS
+    ABFF --> FAS
+    ABFF --> AMS
+    ABFF --> APS
+    ABFF --> SCS
+    
+    %% Backend Services to Database connections
+    US --> UDB
+    FS --> FDB
+    PS --> PDB
+    CBS --> CBDB
+    NS --> NDB
+    PRS --> PRDB
+    CTS --> CTDB
+    DCS --> DCDB
+    FAS --> FADB
+    AMS --> AMDB
+    APS --> APDB
+    SCS --> SCDB
+    
+    %% Styling
+    classDef shellApp fill:#4a90e2,stroke:#2c5aa0,stroke-width:3px,color:#000000
+    classDef userModule fill:#7ed321,stroke:#5cb85c,stroke-width:2px,color:#000000
+    classDef adminModule fill:#7ed321,stroke:#5cb85c,stroke-width:2px,color:#000000
+    classDef bff fill:#bd10e0,stroke:#9013fe,stroke-width:3px,color:#000000
+    classDef service fill:#90ee90,stroke:#32cd32,stroke-width:2px,color:#000000
+    classDef database fill:#e6f3ff,stroke:#87ceeb,stroke-width:2px,color:#000000
+    
+    %% Apply classes
+    class SAU,SAA shellApp
+    class UPM,FUM,PUM,CUM,PAM_USER,CBM,NUM,CLUM,DCUM,AUM,APUM userModule
+    class UAM,FAM,PAM,PAYAM,CBAM,NAM,CLAM,DCAM,SAM,AMAM,APAM adminModule
+    class UBFF,ABFF bff
+    class US,FS,PS,CBS,NS,PRS,CTS,DCS,FAS,AMS,APS,SCS service
+    class UDB,FDB,PDB,CBDB,NDB,PRDB,CTDB,DCDB,FADB,AMDB,APDB,SCDB database

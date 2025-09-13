@@ -11,15 +11,56 @@ flowchart TB
         subgraph MicroFrontends["Micro-Frontend Modules"]
             direction TB
             subgraph UserModules["User Modules"]
-                direction LR
-                PUM["Product User Module<br/>Module Sản phẩm Người dùng"]
-                CUM["Cart User Module<br/>Module Giỏ hàng Người dùng"]
-                NUM["News User Module<br/>Module Tin tức Người dùng"]
+                direction TB
+                subgraph CoreUserModules["Core User Modules"]
+                    direction LR
+                    UPM["User Profile Module<br/>Module Hồ sơ Người dùng"]
+                    FUM["Football User Module<br/>Module Bóng đá Người dùng"]
+                    PUM["Product User Module<br/>Module Sản phẩm Người dùng"]
+                end
+                subgraph BusinessUserModules["Business User Modules"]
+                    direction LR
+                    CUM["Cart User Module<br/>Module Giỏ hàng Người dùng"]
+                    PAM_USER["Payment User Module<br/>Module Thanh toán Người dùng"]
+                    CBM["Chatbot User Module<br/>Module Chatbot Người dùng"]
+                end
+                subgraph ServiceUserModules["Service User Modules"]
+                    direction LR
+                    NUM["News User Module<br/>Module Tin tức Người dùng"]
+                    CLUM["Construction Log User Module<br/>Module Nhật ký Thi công Người dùng"]
+                    DCUM["Design Calculation User Module<br/>Module Tính toán Thiết kế Người dùng"]
+                end
+                subgraph AgentUserModules["Agent User Modules"]
+                    direction LR
+                    AUM["Agent User Module<br/>Module Đại lý Người dùng"]
+                    APUM["Agent Policy User Module<br/>Module Chính sách Đại lý Người dùng"]
+                end
             end
             subgraph AdminModules["Admin Modules"]
-                direction LR
-                PAM["Product Admin Module<br/>Module Sản phẩm Quản trị"]
-                NAM["News Admin Module<br/>Module Tin tức Quản trị"]
+                direction TB
+                subgraph CoreAdminModules["Core Admin Modules"]
+                    direction LR
+                    UAM["User Admin Module<br/>Module Quản trị Người dùng"]
+                    FAM["Football Admin Module<br/>Module Quản trị Bóng đá"]
+                    PAM["Product Admin Module<br/>Module Sản phẩm Quản trị"]
+                end
+                subgraph BusinessAdminModules["Business Admin Modules"]
+                    direction LR
+                    PAYAM["Payment Admin Module<br/>Module Quản trị Thanh toán"]
+                    CBAM["Chatbot Admin Module<br/>Module Quản trị Chatbot"]
+                    NAM["News Admin Module<br/>Module Tin tức Quản trị"]
+                end
+                subgraph ServiceAdminModules["Service Admin Modules"]
+                    direction LR
+                    CLAM["Construction Log Admin Module<br/>Module Quản trị Nhật ký Thi công"]
+                    DCAM["Design Calculation Admin Module<br/>Module Quản trị Tính toán Thiết kế"]
+                    SAM["System Admin Module<br/>Module Quản trị Hệ thống"]
+                end
+                subgraph AgentAdminModules["Agent Admin Modules"]
+                    direction LR
+                    AMAM["Agent Management Admin Module<br/>Module Quản trị Đại lý"]
+                    APAM["Agent Policy Admin Module<br/>Module Quản trị Chính sách Đại lý"]
+                end
             end
         end
     end
@@ -41,7 +82,6 @@ flowchart TB
         
         subgraph CoreServices["Core Services"]
             direction LR
-            AS["Admin Service<br/>Dịch vụ Quản trị Tổng hợp"]
             APS["Agent Policy Service<br/>Dịch vụ Chính sách Đại lý"]
             AMS["Agent Management Service<br/>Dịch vụ Quản lý Đại lý"]
         end
@@ -80,7 +120,6 @@ flowchart TB
             subgraph DB1["Core Databases"]
                 direction LR
                 UDB[(User DB)]
-                ADB[(Admin DB)]
                 FDB[(Football DB)]
                 APDB[(Agent Policy DB)]
             end
@@ -112,12 +151,31 @@ flowchart TB
     BFFLayer --> BackendLayer
     BackendLayer --> InfraLayer
     
-    %% Shell App to Micro-Frontend connections
+    %% Shell App User to User Modules connections
+    SAU -.->|loads| UPM
+    SAU -.->|loads| FUM
     SAU -.->|loads| PUM
     SAU -.->|loads| CUM
+    SAU -.->|loads| PAM_USER
+    SAU -.->|loads| CBM
     SAU -.->|loads| NUM
+    SAU -.->|loads| CLUM
+    SAU -.->|loads| DCUM
+    SAU -.->|loads| AUM
+    SAU -.->|loads| APUM
+    
+    %% Shell App Admin to Admin Modules connections
+    SAA -.->|loads| UAM
+    SAA -.->|loads| FAM
     SAA -.->|loads| PAM
+    SAA -.->|loads| PAYAM
+    SAA -.->|loads| CBAM
     SAA -.->|loads| NAM
+    SAA -.->|loads| CLAM
+    SAA -.->|loads| DCAM
+    SAA -.->|loads| SAM
+    SAA -.->|loads| AMAM
+    SAA -.->|loads| APAM
     
     %% Shell Apps to BFF connections (ALL traffic goes through BFF)
     SAU --> UBFF
@@ -139,7 +197,6 @@ flowchart TB
     UBFF --> FAS
     
     %% Admin BFF to Backend Services connections
-    ABFF --> AS
     ABFF --> APS
     ABFF --> AMS
     ABFF --> PRS
@@ -156,7 +213,6 @@ flowchart TB
     
     %% Services to Database connections
     US --> UDB
-    AS --> ADB
     FS --> FDB
     APS --> APDB
     PS --> PDB
@@ -169,11 +225,9 @@ flowchart TB
     NS --> NDB
     
     %% Infrastructure connections
-    AS --> MB
     US --> MB
     PS --> MB
     SCS --> CACHE
-    AS --> CACHE
     US --> CACHE
     
     %% Styling
@@ -189,12 +243,13 @@ flowchart TB
     
     %% Apply classes
     class SAU,SAA shellApp
-    class PUM,CUM,NUM,PAM,NAM microFrontend
+    class UPM,FUM,PUM,CUM,PAM_USER,CBM,NUM,CLUM,DCUM,AUM,APUM microFrontend
+    class UAM,FAM,PAM,PAYAM,CBAM,NAM,CLAM,DCAM,SAM,AMAM,APAM microFrontend
     class SCS shellConfig
     class SCDB shellConfig
     class UBFF,ABFF bff
-    class AS,APS,AMS,FS,US,PS,CBS,DCS,FAS serviceGreen
+    class APS,AMS,FS,US,PS,CBS,DCS,FAS serviceGreen
     class NS,CTS,PRS servicePink
-    class UDB,ADB,FDB,APDB,PDB,CBDB,DCDB,FADB,AMDB,PRDB,CTDB,NDB,SCDB database
+    class UDB,FDB,APDB,PDB,CBDB,DCDB,FADB,AMDB,PRDB,CTDB,NDB,SCDB database
     class MB,CACHE infrastructure
     class Frontend,BFFLayer,BackendLayer,InfraLayer layerStyle

@@ -25,5 +25,8 @@
     "type": "git",
     "url": "https://github.com/khpt1976-cloud/DuAn12T9.git"
   },
-  "homepage": "https://github.com/khpt1976-cloud/DuAn12T9#readme"
+  "homepage": "https://github.com/khpt1976-cloud/DuAn12T9#readme",
+  "dependencies": {
+    "puppeteer": "^24.20.0"
+  }
 }
