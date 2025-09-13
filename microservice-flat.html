@@ -238,6 +238,24 @@
         .btn:hover::before {
             left: 100%;
         }
+
+        .btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+            background: #6c757d !important;
+            border-color: #6c757d !important;
+        }
+
+        .btn:disabled:hover {
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        .btn:disabled::before {
+            display: none;
+        }
         
         .zoom-info {
             margin-left: 15px;
@@ -513,10 +531,10 @@
                 </ul>
             </div>
             <div class="nav-controls">
-                <button class="btn btn-secondary" onclick="zoomIn()">Phóng to</button>
-                <button class="btn btn-secondary" onclick="zoomOut()">Thu nhỏ</button>
-                <button class="btn btn-secondary" onclick="resetZoom()">Reset</button>
-                <button class="btn btn-secondary" onclick="downloadSVG()">Tải SVG</button>
+                <button class="btn btn-secondary" id="zoomInBtn" onclick="zoomIn()" disabled>Phóng to</button>
+                <button class="btn btn-secondary" id="zoomOutBtn" onclick="zoomOut()" disabled>Thu nhỏ</button>
+                <button class="btn btn-secondary" id="resetBtn" onclick="resetZoom()" disabled>Reset</button>
+                <button class="btn btn-secondary" id="downloadBtn" onclick="downloadSVG()" disabled>Tải SVG</button>
                 <button class="btn btn-primary" onclick="showLoginForm()">Bắt đầu</button>
                 <span class="zoom-info">Zoom: <span id="zoomLevel">100%</span></span>
             </div>
@@ -1032,6 +1050,12 @@ graph TB
             document.querySelector('.diagram-container').style.margin = '20px 0';
             document.querySelector('.diagram-container').style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
             
+            // Enable control buttons after login
+            document.getElementById('zoomInBtn').disabled = false;
+            document.getElementById('zoomOutBtn').disabled = false;
+            document.getElementById('resetBtn').disabled = false;
+            document.getElementById('downloadBtn').disabled = false;
+
             // Re-render Mermaid diagram after showing protected content
             setTimeout(() => {
                 // Force Mermaid to re-process all diagrams
